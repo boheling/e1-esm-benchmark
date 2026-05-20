@@ -41,8 +41,13 @@ dependencies = [
 dev = ["pytest>=8.0", "ruff>=0.5"]
 
 [project.urls]
-Homepage = "https://github.com/jingliu/e1-esm-benchmark"
-Issues = "https://github.com/jingliu/e1-esm-benchmark/issues"
+Homepage = "https://github.com/boheling/e1-esm-benchmark"
+Issues = "https://github.com/boheling/e1-esm-benchmark/issues"
+
+# E1 is pulled from a git URL (a PEP 508 direct reference); hatchling refuses
+# direct references during metadata generation unless this is explicitly enabled.
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/e1_esm_benchmark"]
