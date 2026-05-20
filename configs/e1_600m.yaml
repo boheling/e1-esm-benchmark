@@ -1,0 +1,5 @@
+encoder: e1
+encoder_model: Profluent-Bio/E1-600m
+pooling: mean_residues_only
+dtype: bfloat16
+max_residues: 1022

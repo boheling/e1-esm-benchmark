@@ -1,0 +1,5 @@
+encoder: esm2
+encoder_model: facebook/esm2_t33_650M_UR50D
+pooling: mean_residues_only
+dtype: float16
+max_residues: 1022

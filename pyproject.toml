@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "e1-esm-benchmark"
+version = "0.1.0"
+description = "Frozen-encoder benchmark of Profluent E1 vs. Meta ESM2 on FLIP Meltome thermostability regression."
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+license = { text = "MIT" }
+authors = [{ name = "Jing Liu", email = "boheling@gmail.com" }]
+keywords = ["protein", "embeddings", "ESM2", "E1", "FLIP", "benchmark"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+dependencies = [
+    # Core numerics / data
+    "numpy>=1.26",
+    "pandas>=2.0",
+    "scipy>=1.11",
+    "scikit-learn>=1.4",
+    "tqdm>=4.66",
+    "pyyaml>=6.0",
+    "requests>=2.31",
+    # DL
+    "torch>=2.7,<2.9",
+    "transformers>=4.40,<4.57",
+    "tokenizers>=0.15",
+    "datasets>=2.18",
+    "huggingface_hub>=0.23",
+    # E1 (pulls its own deps: einops, biotite, polars, kernels, etc.)
+    "E1 @ git+https://github.com/Profluent-AI/E1.git",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.5"]
+
+[project.urls]
+Homepage = "https://github.com/jingliu/e1-esm-benchmark"
+Issues = "https://github.com/jingliu/e1-esm-benchmark/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/e1_esm_benchmark"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP"]
+ignore = ["E501"]
