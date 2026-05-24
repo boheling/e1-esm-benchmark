@@ -28,6 +28,17 @@ DEFAULT_MODEL = "Profluent-Bio/E1-600m"
 # Bump this up if you confirm E1 handles longer sequences on your hardware.
 E1_MAX_RESIDUES = 1022
 
+# E1BatchPreparer.get_batch_kwargs() returns the four tensors forward() needs
+# *plus* extra entries — non-tensor metadata ("context", "context_len") and
+# "labels" (which would trigger an unneeded MLM-loss computation). Splatting the
+# whole dict into the model raises "unexpected keyword argument 'context'", so we
+# keep only the tensors E1ForMaskedLM.forward() actually accepts.
+_FORWARD_KEYS = ("input_ids", "within_seq_position_ids", "global_position_ids", "sequence_ids")
+
+
+def _model_inputs(batch: dict) -> dict:
+    return {k: batch[k] for k in _FORWARD_KEYS}
+
 
 @dataclass
 class E1Embedder:
@@ -60,7 +71,7 @@ class E1Embedder:
                 else torch.cuda.amp.autocast(enabled=False) if self.device.startswith("cuda") else _nullctx()
             )
             with autocast_ctx:
-                out = self.model(**probe_batch)
+                out = self.model(**_model_inputs(probe_batch))
             self.embedding_dim = int(out.embeddings.shape[-1])
         logger.info("E1 embedding dim = %d", self.embedding_dim)
 
@@ -85,7 +96,7 @@ class E1Embedder:
                 else _nullctx()
             )
             with torch.no_grad(), autocast_ctx:
-                out = self.model(**batch)
+                out = self.model(**_model_inputs(batch))
             embs = out.embeddings[0].float().cpu().numpy()  # (L, E)
             mask = residue_mask[0].cpu().numpy()            # (L,)
 
